@@ -109,7 +109,7 @@ function makeCard(scene, index, galleryId, total) {
     <div class="card-meta">
       <div class="card-title">${scene.title} <span>(${index + 1} / ${total})</span></div>
       <div class="gallery-controls" style="gap:10px">
-        ${isPair && scene.flow ? `<button class="mode-switch" type="button" aria-label="切换右侧为光流或结果">Flow ⇄ Result</button>` : ""}
+        ${isPair && scene.flow ? `<button class="mode-switch" type="button" aria-label="Toggle right side between optical flow and result">Flow ⇄ Result</button>` : ""}
         <div class="scene-dots">
           ${Array.from({ length: total }, (_, dotIndex) => `
             <button class="scene-dot" data-gallery="${galleryId}" data-index="${dotIndex}" aria-label="Show scene ${dotIndex + 1}"></button>
@@ -354,7 +354,7 @@ if (copyBib) {
     const text = (document.querySelector(".bibtex code") || {}).innerText || "";
     const done = () => {
       const old = copyBib.textContent;
-      copyBib.textContent = "已复制 ✓";
+      copyBib.textContent = "Copied ✓";
       setTimeout(() => { copyBib.textContent = old; }, 1800);
     };
     try {

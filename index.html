@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>X-Act — 看懂动作，换一个身体，重新做到</title>
-  <meta name="description" content="X-Act：将参考演示视频中的动作迁移到新场景与新执行体。Human→Human / Human→Robot / Robot→Robot，无需逐帧标注。">
+  <title>X-Act — Generalizable Action Transfer via Trace-Flow Motion Planner</title>
+  <meta name="description" content="X-Act transfers the action in a reference demonstration video to a new scene and a new embodiment — Human→Human, Human→Robot, Robot→Robot, without per-frame annotations.">
   <meta property="og:title" content="X-Act: Generalizable Action Transfer via Trace-Flow Motion Planner">
-  <meta property="og:description" content="看懂示范里的“动作”，换一个身体，重新做到。">
+  <meta property="og:description" content="Understand the action in a demonstration, change the body, and do it again.">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,12 +17,12 @@
     <nav class="nav">
       <a href="#teaser" class="brand"><span class="xact-logo">X-Act</span></a>
       <div class="nav-links">
-        <a href="#teaser">总览 Overview</a>
-        <a href="#abstract">简介 Abstract</a>
-        <a href="#method">方法 Method</a>
-        <a href="#results">演示 Videos</a>
-        <a href="#quantitative">定量 Quantitative</a>
-        <a href="#citation">引用 Citation</a>
+        <a href="#teaser">Overview</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Videos</a>
+        <a href="#quantitative">Quantitative</a>
+        <a href="#citation">Citation</a>
       </div>
     </nav>
   </header>
@@ -31,14 +31,13 @@
     <section class="hero">
       <div class="container hero-inner">
         <p class="venue">ICLR 2027 · Under Review</p>
-        <h1><span class="xact-logo">X-Act</span>：看懂动作，换一个身体，重新做到</h1>
-        <p class="tagline">Generalizable Action Transfer via Trace–Flow Motion Planner for World Simulation</p>
-        <p class="tagline cn">给定一段参考演示视频与一张目标场景画面，X-Act 将动作语义迁移到全新场景、全新执行体——不复制源外观，也不需要逐帧标注。</p>
+        <h1><span class="xact-logo">X-Act</span>: Generalizable Action Transfer via Trace–Flow Motion Planner</h1>
+        <p class="tagline">Given a reference demonstration video and a single anchor frame of a new scene, X-Act faithfully transfers the demonstrated action to a different scene and embodiment — without copying the source appearance and without dense per-frame annotations.</p>
         <div class="actions">
-          <a class="button primary" href="#teaser">主视频 Main Video</a>
-          <a class="button" href="#method">方法 Method</a>
-          <a class="button" href="#results">演示 Gallery</a>
-          <a class="button" href="assets/paper.pdf" download>论文 Paper (PDF)</a>
+          <a class="button primary" href="#teaser">Main Video</a>
+          <a class="button" href="#method">Method</a>
+          <a class="button" href="#results">Gallery</a>
+          <a class="button" href="assets/paper.pdf" download>Paper (PDF)</a>
         </div>
       </div>
     </section>
@@ -48,8 +47,8 @@
         <div class="teaser-shell">
           <div class="teaser-heading">
             <div>
-              <p class="eyebrow">Main Video · 主视频</p>
-              <h2>Project Overview 项目总览</h2>
+              <p class="eyebrow">Main Video</p>
+              <h2>Project Overview</h2>
             </div>
           </div>
           <div class="main-video-frame">
@@ -61,53 +60,52 @@
             </div>
             <div id="main-video-loader" class="video-loader">Loading video...</div>
           </div>
-          <p class="stage-note">同一段参考演示（人手操作）→ 目标场景运动规划（稠密光流）→ 机器人执行结果。三栏同步循环播放。</p>
+          <p class="stage-note">The same reference demonstration (a human hand) → target-scene motion planning (dense optical flow) → robot execution result. The three panels loop in sync.</p>
         </div>
       </div>
     </section>
 
     <section id="abstract" class="section">
       <div class="container narrow">
-        <h2>Abstract 简介</h2>
-        <p class="lead">X-Act 将动作迁移（Action Transfer）拆成「动作追踪 → 场景运动规划 → 目标视频生成」三步，全部在一个视频扩散 Transformer（Video Diffusion Transformer）中完成。</p>
+        <h2>Abstract</h2>
+        <p class="lead">X-Act decomposes action transfer into action tracing, target-scene motion planning, and target video generation — all realized within a single video diffusion transformer.</p>
         <p>
-          动作迁移要保留的是动作语义（Action Semantics）：轨迹、接触时机、物体响应；
-          必须丢掉的是源视频的外观：手形、皮肤、场景纹理。现有方法要么让与外观纠缠的运动特征直接注入生成，造成严重的身份泄漏（Identity Leakage）；
-          要么依赖逐帧掩码、轨迹等稠密标注做刚性约束，难以适配新身体结构。两条路线都缺少一个先“看懂动作、再规划动作”的中间推理环节。
+          Action transfer must preserve action semantics — trajectory, contact timing, and object response — while discarding source appearance such as hand shape, skin, and scene texture.
+          Existing approaches either inject motion features that are entangled with the source actor, causing severe identity leakage, or rely on dense per-frame masks and trajectories that cannot adapt to a new embodiment.
+          Both paradigms skip the intermediate step of understanding the demonstrated action before planning how it should unfold in the target scene.
         </p>
         <p>
-          X-Act 把参考视频编码成干净的 Trace 段；在去噪过程中预测一段稠密光流（Dense Optical Flow）作为面向目标场景的 Flow 运动计划；
-          最后从目标锚点帧（Anchor Frame）出发生成 Target 视频。三个设计支撑了这条动作链：
-          Trace–Flow Motion Planner 把“规划”做成显式的光流预测；Segment-Gapped RoPE（SG-RoPE）在段间插入可学习位置间隔；
-          Trace-Anchored Causal Attention（TACA）保证信息只沿 Trace → Flow → Target 单向流动。
+          X-Act encodes the reference video as a clean Trace segment, predicts a dense optical-flow segment as a target-scene Flow motion plan during denoising, and generates the Target video from the target anchor frame under the joint guidance of Trace and Flow.
+          Three designs support this motion chain: the Trace–Flow Motion Planner turns planning into explicit flow prediction;
+          Segment-Gapped RoPE (SG-RoPE) inserts learnable positional gaps between segments;
+          and Trace-Anchored Causal Attention (TACA) enforces a unidirectional Trace → Flow → Target information flow.
         </p>
         <p>
-          训练数据 X-Act-30K 包含 30,000 对动作匹配视频、覆盖 107 类操作；
-          在 200 例测试（80 H2H / 80 R2R / 40 H2R）与真实机械臂部署上都取得了领先结果——无需密集推理期标注。
+          Trained on X-Act-30K — 30,000 action-matched video pairs covering 107 manipulation categories — X-Act achieves leading results on a 200-case test bed (80 H2H / 80 R2R / 40 H2R) and in real-robot deployment, without requiring dense inference-time annotations.
         </p>
       </div>
     </section>
 
     <section id="method" class="section alt">
       <div class="container">
-        <h2>Method 方法</h2>
+        <h2>Method</h2>
         <div class="method-grid">
           <article>
             <h3>Trace–Flow Motion Planner</h3>
-            <p>把“运动规划”实现为去噪过程中的稠密光流预测：训练时只给 Flow 与 Target 加噪，Flow 以 RAFT 光流为真值，让规划成为显式、可解码的中间环节。</p>
+            <p>Motion planning is realized as dense optical-flow prediction inside the denoising process: only Flow and Target are noised during training, with RAFT flow as supervision, making the plan an explicit and decodable intermediate stage.</p>
           </article>
           <article>
             <h3>Segment-Gapped RoPE (SG-RoPE)</h3>
-            <p>三段共享一条单调时间轴，段内按像素帧连续编号，段间插入可学习的位置间隔——段与段之间不会被误读成连续物理运动。</p>
+            <p>The three segments share one monotonic timeline: within each segment, frames are numbered continuously, while learnable gaps between segments prevent boundaries from being read as continuous physical motion.</p>
           </article>
           <article>
             <h3>Trace-Anchored Causal Attention (TACA)</h3>
-            <p>不对称因果注意力：Trace 只看自身；Flow 不回看 Target；Target 可参考全部。动作理解 → 运动规划 → 画面实现单向流动，条件表示保持稳定。</p>
+            <p>An asymmetric causal attention mask: Trace attends only to itself; Flow does not look back at Target; Target can attend to everything — action understanding, motion planning, and visual realization flow in one direction.</p>
           </article>
         </div>
 
         <figure class="paper-figure">
-          <svg viewBox="0 0 1200 360" role="img" aria-label="Trace 到 Flow 到 Target 的三段动作链示意图" style="display:block;width:100%;height:auto;background:#0a0e15;">
+          <svg viewBox="0 0 1200 360" role="img" aria-label="Diagram of the Trace to Flow to Target action chain" style="display:block;width:100%;height:auto;background:#0a0e15;">
             <defs>
               <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0" stop-color="#ff5263"/>
@@ -122,22 +120,23 @@
             <rect x="450" y="80" width="300" height="150" rx="14" fill="rgba(22,214,230,0.10)" stroke="#16d6e6" stroke-width="2"/>
             <rect x="860" y="80" width="300" height="150" rx="14" fill="rgba(240,195,90,0.10)" stroke="#f0c35a" stroke-width="2"/>
 
-            <text x="190" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Trace</text>
-            <text x="190" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">动作追踪</text>
-            <text x="190" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">clean reference latent</text>
+            <text x="190" y="128" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Trace</text>
+            <text x="190" y="170" text-anchor="middle" fill="#9aa8b8" font-size="19">Action Tracing</text>
+            <text x="190" y="202" text-anchor="middle" fill="#9aa8b8" font-size="16">clean reference latent</text>
 
-            <text x="600" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Flow</text>
-            <text x="600" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">场景运动规划</text>
-            <text x="600" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">dense optical flow</text>
+            <text x="600" y="128" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Flow</text>
+            <text x="600" y="170" text-anchor="middle" fill="#9aa8b8" font-size="19">Scene Motion Planning</text>
+            <text x="600" y="202" text-anchor="middle" fill="#9aa8b8" font-size="16">dense optical flow</text>
 
-            <text x="1010" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Target</text>
-            <text x="1010" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">目标视频生成</text>
-            <text x="1010" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">target video</text>
+            <text x="1010" y="128" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Target</text>
+            <text x="1010" y="170" text-anchor="middle" fill="#9aa8b8" font-size="19">Target Video Generation</text>
+            <text x="1010" y="202" text-anchor="middle" fill="#9aa8b8" font-size="16">target video</text>
 
             <line x1="345" y1="155" x2="438" y2="155" stroke="#9aa8b8" stroke-width="2" marker-end="url(#arrowHead)"/>
             <line x1="755" y1="155" x2="848" y2="155" stroke="#9aa8b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+
             <rect x="40" y="280" width="1120" height="50" rx="25" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)"/>
-            <text x="600" y="311" text-anchor="middle" fill="#c9d4df" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">同一 Video Diffusion Transformer 内联合去噪 · 冻结主干 + LoRA · SG-RoPE 管理时间位置 · TACA 保证单向信息流</text>
+            <text x="600" y="311" text-anchor="middle" fill="#c9d4df" font-size="19">Joint denoising in one Video Diffusion Transformer · Frozen backbone + LoRA · SG-RoPE positions segments · TACA enforces one-way flow</text>
           </svg>
         </figure>
       </div>
@@ -145,19 +144,19 @@
 
     <section id="results" class="section dark-results">
       <div class="container">
-        <h2>Video Results 视频演示</h2>
-        <p class="section-intro">在画面中拖动分割线，对比参考演示（Reference）与 X-Act 生成结果（Result）；点击卡片上的 “Flow ⇄ Result” 可把右侧切换为运动规划光流（Motion Plan）。左右箭头或圆点可切换示例。</p>
+        <h2>Video Results</h2>
+        <p class="section-intro">Drag the divider to compare the reference demonstration (Reference) with the X-Act result (Result). Click “Flow ⇄ Result” on a card to show the motion-plan optical flow (Motion Plan) on the right. Use the arrows or the dots to switch examples.</p>
         <div id="gallery-list"></div>
       </div>
     </section>
 
     <section id="quantitative" class="section alt">
       <div class="container">
-        <h2>Quantitative Results 定量结果</h2>
-        <p class="section-intro">以下数值摘自论文表格；↑ 表示越高越好，红色高亮为 X-Act（Ours）。论文正在双盲审稿中，结果未经同行评审。</p>
+        <h2>Quantitative Results</h2>
+        <p class="section-intro">Numbers are taken from the paper; ↑ means higher is better; red highlights X-Act (Ours). The paper is under double-blind review, so results are not yet peer-reviewed.</p>
 
         <div class="table-card">
-          <h3>对比实验 Comparison（200 例测试：80 H2H / 80 R2R / 40 H2R）</h3>
+          <h3>Comparison (200-case test: 80 H2H / 80 R2R / 40 H2R)</h3>
           <div class="table-scroll">
             <table class="metrics-table comparison-table">
               <thead>
@@ -181,11 +180,11 @@
               </tbody>
             </table>
           </div>
-          <p class="table-note">用户研究（20 人，1–5 分）五维均第一：Motion Quality 3.16 · Interaction Rationality 3.21 · Semantic Similarity 3.61 · Appearance Consistency 3.28 · Temporal Coherence 3.33。</p>
+          <p class="table-note">User study (20 participants, 1–5) — first on all five axes: Motion Quality 3.16 · Interaction Rationality 3.21 · Semantic Similarity 3.61 · Appearance Consistency 3.28 · Temporal Coherence 3.33.</p>
         </div>
 
         <div class="table-card">
-          <h3>消融实验 Ablation（自动指标）</h3>
+          <h3>Ablation (automatic metrics)</h3>
           <div class="table-scroll">
             <table class="metrics-table ablation-table">
               <thead>
@@ -201,14 +200,14 @@
                 <tr><td>W/o TF Motion Planner</td><td>0.9690</td><td>0.9686</td><td>0.2214</td><td>0.7781</td></tr>
                 <tr><td>W/o SG-RoPE</td><td>0.9688</td><td>0.9680</td><td>0.2208</td><td>0.7786</td></tr>
                 <tr><td>W/o TACA</td><td>0.9701</td><td>0.9692</td><td>0.2219</td><td>0.7789</td></tr>
-                <tr class="ours"><td>X-Act（Ours）</td><td>0.9788</td><td>0.9763</td><td>0.2227</td><td>0.7798</td></tr>
+                <tr class="ours"><td>X-Act (Ours)</td><td>0.9788</td><td>0.9763</td><td>0.2227</td><td>0.7798</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="table-card">
-          <h3>真实机械臂 Real-Robot（AgileX · 6 个未见任务 × 20 次试验，平均成功率）</h3>
+          <h3>Real-Robot (AgileX · 6 unseen tasks × 20 trials, average success)</h3>
           <div class="table-scroll">
             <table class="metrics-table ablation-table">
               <thead>
@@ -222,21 +221,21 @@
                 <tr><td>Qwen-VLA</td><td>28.3%</td></tr>
                 <tr><td>Fast-WAM</td><td>43.3%</td></tr>
                 <tr><td>ImageWAM</td><td>53.3%</td></tr>
-                <tr class="ours"><td>X-Act（Ours）</td><td>68.3%</td></tr>
+                <tr class="ours"><td>X-Act (Ours)</td><td>68.3%</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="table-note">单任务成功率：Close Drawer 75% · Stack Cups 60% · Pick and Place 85% · Place Bowl Plate 70% · Slide Block 65% · Drag Cloth 55%。</p>
+          <p class="table-note">Per-task success: Close Drawer 75% · Stack Cups 60% · Pick and Place 85% · Place Bowl Plate 70% · Slide Block 65% · Drag Cloth 55%.</p>
         </div>
       </div>
     </section>
 
     <section id="citation" class="section">
       <div class="container narrow">
-        <h2>Citation 引用</h2>
-        <p class="section-intro">论文正在 ICLR 2027 双盲审稿中，作者信息暂以匿名呈现；正式发表后请以最终版本信息引用。</p>
+        <h2>Citation</h2>
+        <p class="section-intro">The paper is under double-blind review at ICLR 2027; author information is anonymized. Please cite the final version once published.</p>
         <div class="bib-wrap">
-          <button class="button copy-btn" id="copyBib" type="button">复制 BibTeX</button>
+          <button class="button copy-btn" id="copyBib" type="button">Copy BibTeX</button>
           <pre class="bibtex"><code>@misc{xact2027,
   title  = {Generalizable Action Transfer via
             Trace-Flow Motion Planner for World Simulation},
@@ -251,7 +250,7 @@
   </main>
 
   <footer class="footer">
-    <p>X-Act project page · ICLR 2027 双盲审稿中（匿名）· 内容基于论文手稿整理，未经同行评审</p>
+    <p>X-Act project page · Under double-blind review at ICLR 2027 (anonymous) · Content compiled from the paper draft and not peer-reviewed</p>
   </footer>
 
   <script src="videos_manifest.js"></script>
