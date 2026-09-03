@@ -1,336 +1,243 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>X-Act — 看懂动作，换一个身体，重新做到</title>
-  <meta name="description" content="X-Act：将参考演示视频中的动作迁移到新场景与新执行体的统一框架。Human→Human / Human→Robot / Robot→Robot，无需逐帧标注。">
-  <meta property="og:title" content="X-Act — Generalizable Action Transfer via Trace-Flow Motion Planner">
+  <meta name="description" content="X-Act：将参考演示视频中的动作迁移到新场景与新执行体。Human→Human / Human→Robot / Robot→Robot，无需逐帧标注。">
+  <meta property="og:title" content="X-Act: Generalizable Action Transfer via Trace-Flow Motion Planner">
   <meta property="og:description" content="看懂示范里的“动作”，换一个身体，重新做到。">
-  <meta property="og:type" content="website">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <a class="skip" href="#main">跳到正文</a>
 
-  <header class="site-header" id="siteHeader">
-    <div class="wrap nav-inner">
-      <a class="brand" href="#top" aria-label="X-Act 首页">
-        <span class="brand-mark" aria-hidden="true">X</span>
-        <span class="brand-name">X-Act</span>
-      </a>
-      <nav class="nav-links" aria-label="页面导航">
-        <a href="#idea">理念</a>
-        <a href="#method">方法</a>
-        <a href="#demos">演示</a>
-        <a href="#data">数据</a>
-        <a href="#results">实验</a>
-        <a href="#cite">引用</a>
-      </nav>
-      <span class="review-pill">ICLR 2027 · Under Review</span>
-    </div>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="#teaser" class="brand"><span class="xact-logo">X-Act</span></a>
+      <div class="nav-links">
+        <a href="#teaser">总览 Overview</a>
+        <a href="#abstract">简介 Abstract</a>
+        <a href="#method">方法 Method</a>
+        <a href="#results">演示 Videos</a>
+        <a href="#quantitative">定量 Quantitative</a>
+        <a href="#citation">引用 Citation</a>
+      </div>
+    </nav>
   </header>
 
-  <main id="main">
-
-    <!-- ============ HERO ============ -->
-    <section class="hero section" id="top">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow" data-reveal>Action Transfer &middot; World Simulation &middot; ICLR 2027</p>
-          <h1 data-reveal>
-            看懂示范里的<span class="q">“</span>动作<span class="q">”</span>，<br>
-            换一个身体，<span class="hl">重新做到</span>。
-          </h1>
-          <p class="lede" data-reveal>
-            <strong>X-Act</strong> 把动作迁移（Action Transfer）拆成
-            <em>动作追踪 → 场景运动规划 → 目标视频生成</em> 三步，
-            全部在一个视频扩散 Transformer（Video Diffusion Transformer）中完成：
-            给定一段参考演示视频与一张目标场景画面，就能在全新场景里，
-            用另一双手或另一台机械臂，把同一件事做好。
-          </p>
-          <div class="hero-cta" data-reveal>
-            <a class="btn btn-ink" href="#demos">观看演示<span aria-hidden="true">↓</span></a>
-            <a class="btn btn-ghost" href="assets/paper.pdf" download>论文 PDF（审稿版）</a>
-          </div>
-          <ul class="hero-chips" data-reveal>
-            <li>Human → Human</li>
-            <li>Human → Robot</li>
-            <li>Robot → Robot</li>
-            <li>无需逐帧标注</li>
-          </ul>
-        </div>
-
-        <div class="hero-stage" data-reveal>
-          <div class="stage-head">
-            <span>01 Reference</span>
-            <i aria-hidden="true">→</i>
-            <span>02 Motion Plan</span>
-            <i aria-hidden="true">→</i>
-            <span>03 Result</span>
-          </div>
-          <div class="tri tri-hero" data-card>
-            <div class="vbox">
-              <video autoplay muted loop playsinline preload="metadata"
-                     poster="assets/img/poster/h2r-0001-input.jpg"
-                     data-src="assets/media/demo/h2r/0001-input.mp4"
-                     aria-label="参考演示视频（人手操作）"></video>
-              <span class="vtag">Trace</span>
-            </div>
-            <div class="vbox">
-              <video autoplay muted loop playsinline preload="metadata"
-                     poster="assets/img/poster/h2r-0001-flow.jpg"
-                     data-src="assets/media/demo/h2r/0001-flow.mp4"
-                     aria-label="稠密光流运动规划"></video>
-              <span class="vtag">Flow</span>
-            </div>
-            <div class="vbox">
-              <video autoplay muted loop playsinline preload="metadata"
-                     poster="assets/img/poster/h2r-0001-output.jpg"
-                     data-src="assets/media/demo/h2r/0001-output.mp4"
-                     aria-label="目标场景生成视频（机器人执行）"></video>
-              <span class="vtag">Target</span>
-            </div>
-          </div>
-          <p class="stage-note">Human → Robot · 参考演示与目标场景来自不同执行体，动作保持一致。</p>
-        </div>
-      </div>
-
-      <div class="stat-band">
-        <div class="wrap stat-grid">
-          <div class="stat" data-count="30000" data-decimals="0"><span class="stat-num">0</span><span class="stat-suffix">段</span><p>动作配对训练视频</p></div>
-          <div class="stat" data-count="107" data-decimals="0"><span class="stat-num">0</span><p>种动作类别</p></div>
-          <div class="stat" data-count="3" data-decimals="0"><span class="stat-num">0</span><span class="stat-suffix">类</span><p>跨执行体迁移模式</p></div>
-          <div class="stat" data-count="68.3" data-decimals="1"><span class="stat-num">0</span><span class="stat-suffix">%</span><p>真实机械臂平均成功率</p></div>
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="venue">ICLR 2027 · Under Review</p>
+        <h1><span class="xact-logo">X-Act</span>：看懂动作，换一个身体，重新做到</h1>
+        <p class="tagline">Generalizable Action Transfer via Trace–Flow Motion Planner for World Simulation</p>
+        <p class="tagline cn">给定一段参考演示视频与一张目标场景画面，X-Act 将动作语义迁移到全新场景、全新执行体——不复制源外观，也不需要逐帧标注。</p>
+        <div class="actions">
+          <a class="button primary" href="#teaser">主视频 Main Video</a>
+          <a class="button" href="#method">方法 Method</a>
+          <a class="button" href="#results">演示 Gallery</a>
+          <a class="button" href="assets/paper.pdf" download>论文 Paper (PDF)</a>
         </div>
       </div>
     </section>
 
-    <!-- ============ IDEA ============ -->
-    <section class="section" id="idea">
-      <div class="wrap">
-        <p class="eyebrow" data-reveal>01 · 问题</p>
-        <h2 data-reveal>难的不是“会动”，<br>而是分清<span class="hl">“做什么”</span>与<span class="hl2">“谁来做”</span>。</h2>
-        <p class="lead" data-reveal>
+    <section id="teaser" class="section teaser-section">
+      <div class="container">
+        <div class="teaser-shell">
+          <div class="teaser-heading">
+            <div>
+              <p class="eyebrow">Main Video · 主视频</p>
+              <h2>Project Overview 项目总览</h2>
+            </div>
+          </div>
+          <div class="main-video-frame">
+            <video id="main-video" controls muted loop playsinline preload="metadata" poster="assets/img/main_overview_poster.jpg" data-src="assets/media/main_overview.mp4"></video>
+            <div class="stage-labels" aria-hidden="true">
+              <span class="stage-label">Reference</span>
+              <span class="stage-label">Motion Plan</span>
+              <span class="stage-label">Result</span>
+            </div>
+            <div id="main-video-loader" class="video-loader">Loading video...</div>
+          </div>
+          <p class="stage-note">同一段参考演示（人手操作）→ 目标场景运动规划（稠密光流）→ 机器人执行结果。三栏同步循环播放。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="abstract" class="section">
+      <div class="container narrow">
+        <h2>Abstract 简介</h2>
+        <p class="lead">X-Act 将动作迁移（Action Transfer）拆成「动作追踪 → 场景运动规划 → 目标视频生成」三步，全部在一个视频扩散 Transformer（Video Diffusion Transformer）中完成。</p>
+        <p>
           动作迁移要保留的是动作语义（Action Semantics）：轨迹、接触时机、物体响应；
-          必须丢掉的是源视频的外观：手形、皮肤、场景纹理。真正的难点是，
-          现有方法常常<span class="em-inline">直接让源特征流向目标空间</span>，中间没有“先看懂、再规划”的推理环节。
+          必须丢掉的是源视频的外观：手形、皮肤、场景纹理。现有方法要么让与外观纠缠的运动特征直接注入生成，造成严重的身份泄漏（Identity Leakage）；
+          要么依赖逐帧掩码、轨迹等稠密标注做刚性约束，难以适配新身体结构。两条路线都缺少一个先“看懂动作、再规划动作”的中间推理环节。
         </p>
-
-        <div class="card-grid card-grid-3">
-          <article class="fault-card" data-reveal>
-            <span class="fault-mark">×</span>
-            <h3>外观泄漏<br>Identity Leakage</h3>
-            <p>从源视频提取的运动特征（时间注意力、频域特征）与演员外观纠缠在一起，注入后生成结果“长得像源演员”，而非目标执行体。</p>
-          </article>
-          <article class="fault-card" data-reveal>
-            <span class="fault-mark">×</span>
-            <h3>刚性复刻<br>Rigid Replay</h3>
-            <p>依赖逐帧分割掩码或交互轨迹等稠密标注；空间约束是刚性的，无法适应新身体结构、新物体形态下的真实运动。</p>
-          </article>
-          <article class="answer-card" data-reveal>
-            <span class="fault-mark ok">✓</span>
-            <h3>显式运动规划<br>Explicit Motion Planner</h3>
-            <p>X-Act 让模型先“读”演示（Trace），再为目标场景“规划”运动（Flow），最后“画出”结果（Target）——三段在同一个去噪过程里完成。</p>
-          </article>
-        </div>
+        <p>
+          X-Act 把参考视频编码成干净的 Trace 段；在去噪过程中预测一段稠密光流（Dense Optical Flow）作为面向目标场景的 Flow 运动计划；
+          最后从目标锚点帧（Anchor Frame）出发生成 Target 视频。三个设计支撑了这条动作链：
+          Trace–Flow Motion Planner 把“规划”做成显式的光流预测；Segment-Gapped RoPE（SG-RoPE）在段间插入可学习位置间隔；
+          Trace-Anchored Causal Attention（TACA）保证信息只沿 Trace → Flow → Target 单向流动。
+        </p>
+        <p>
+          训练数据 X-Act-30K 包含 30,000 对动作匹配视频、覆盖 107 类操作；
+          在 200 例测试（80 H2H / 80 R2R / 40 H2R）与真实机械臂部署上都取得了领先结果——无需密集推理期标注。
+        </p>
       </div>
     </section>
 
-    <!-- ============ METHOD ============ -->
-    <section class="section section-ink" id="method">
-      <div class="wrap">
-        <p class="eyebrow eyebrow-ink" data-reveal>02 · 方法</p>
-        <h2 data-reveal>一条可解码的动作链：<br><span class="chain">Trace → Flow → Target</span></h2>
-        <p class="lead lead-ink" data-reveal>
-          三段按时间拼接成一条 token 序列，由一个冻结主干 + 可训练 LoRA 的视频扩散 Transformer 联合去噪；
-          每一段都可以单独解码查看，让“动作理解、运动规划、画面实现”各司其职。
-        </p>
-
-        <ol class="steps">
-          <li data-reveal>
-            <div class="step-no">01</div>
-            <div>
-              <h3>Trace · 动作追踪</h3>
-              <p>参考演示视频的“干净”潜空间编码。它保留完整的时空动作动态与手/夹爪–物体交互，在整个去噪过程中不被噪声污染，是固定的条件。</p>
-            </div>
-          </li>
-          <li data-reveal>
-            <div class="step-no">02</div>
-            <div>
-              <h3>Flow · 场景运动规划</h3>
-              <p>一段稠密光流（Dense Optical Flow）视频，把从 Trace 中读到的动作重新规划为目标场景里应有的位移；它就是这个“Motion Planner”本身。</p>
-            </div>
-          </li>
-          <li data-reveal>
-            <div class="step-no">03</div>
-            <div>
-              <h3>Target · 目标视频生成</h3>
-              <p>从目标场景的锚点帧（Anchor Frame）出发，在 Trace 与 Flow 的共同引导下生成目标视频：动作是它的，样子是“你”的。</p>
-            </div>
-          </li>
-        </ol>
-
-        <div class="tech-row">
-          <article class="tech-card" data-reveal>
-            <span class="tech-tag">A</span>
+    <section id="method" class="section alt">
+      <div class="container">
+        <h2>Method 方法</h2>
+        <div class="method-grid">
+          <article>
             <h3>Trace–Flow Motion Planner</h3>
-            <p>把“规划”实现为去噪过程中的稠密光流预测：训练时只给 Flow 与 Target 加噪并监督，Flow 用 RAFT 光流作为真值，最终无需辅助条件网络。</p>
+            <p>把“运动规划”实现为去噪过程中的稠密光流预测：训练时只给 Flow 与 Target 加噪，Flow 以 RAFT 光流为真值，让规划成为显式、可解码的中间环节。</p>
           </article>
-          <article class="tech-card" data-reveal>
-            <span class="tech-tag">B</span>
-            <h3>SG-RoPE</h3>
-            <p>Segment-Gapped RoPE：三段共享一条单调时间轴，段间插入<em>可学习位置间隔</em>。段内保持连续运动，段与段之间不会被误读成连续位移。</p>
+          <article>
+            <h3>Segment-Gapped RoPE (SG-RoPE)</h3>
+            <p>三段共享一条单调时间轴，段内按像素帧连续编号，段间插入可学习的位置间隔——段与段之间不会被误读成连续物理运动。</p>
           </article>
-          <article class="tech-card" data-reveal>
-            <span class="tech-tag">C</span>
-            <h3>TACA</h3>
-            <p>Trace-Anchored Causal Attention：不对称因果注意力。Trace 只看自身；Flow 不回看 Target；Target 可以参考全部——保证信息单向流动。</p>
+          <article>
+            <h3>Trace-Anchored Causal Attention (TACA)</h3>
+            <p>不对称因果注意力：Trace 只看自身；Flow 不回看 Target；Target 可参考全部。动作理解 → 运动规划 → 画面实现单向流动，条件表示保持稳定。</p>
           </article>
         </div>
+
+        <figure class="paper-figure">
+          <svg viewBox="0 0 1200 360" role="img" aria-label="Trace 到 Flow 到 Target 的三段动作链示意图" style="display:block;width:100%;height:auto;background:#0a0e15;">
+            <defs>
+              <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff5263"/>
+                <stop offset="1" stop-color="#16d6e6"/>
+              </linearGradient>
+              <marker id="arrowHead" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+                <path d="M0 0 L10 4 L0 8 Z" fill="#9aa8b8"/>
+              </marker>
+            </defs>
+
+            <rect x="40" y="80" width="300" height="150" rx="14" fill="rgba(255,82,99,0.10)" stroke="#ff5263" stroke-width="2"/>
+            <rect x="450" y="80" width="300" height="150" rx="14" fill="rgba(22,214,230,0.10)" stroke="#16d6e6" stroke-width="2"/>
+            <rect x="860" y="80" width="300" height="150" rx="14" fill="rgba(240,195,90,0.10)" stroke="#f0c35a" stroke-width="2"/>
+
+            <text x="190" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Trace</text>
+            <text x="190" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">动作追踪</text>
+            <text x="190" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">clean reference latent</text>
+
+            <text x="600" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Flow</text>
+            <text x="600" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">场景运动规划</text>
+            <text x="600" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">dense optical flow</text>
+
+            <text x="1010" y="135" text-anchor="middle" fill="#f3f7fb" font-size="30" font-weight="700">Target</text>
+            <text x="1010" y="172" text-anchor="middle" fill="#9aa8b8" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">目标视频生成</text>
+            <text x="1010" y="203" text-anchor="middle" fill="#9aa8b8" font-size="16">target video</text>
+
+            <line x1="345" y1="155" x2="438" y2="155" stroke="#9aa8b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="755" y1="155" x2="848" y2="155" stroke="#9aa8b8" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <rect x="40" y="280" width="1120" height="50" rx="25" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)"/>
+            <text x="600" y="311" text-anchor="middle" fill="#c9d4df" font-size="19" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif;">同一 Video Diffusion Transformer 内联合去噪 · 冻结主干 + LoRA · SG-RoPE 管理时间位置 · TACA 保证单向信息流</text>
+          </svg>
+        </figure>
       </div>
     </section>
 
-    <!-- ============ DEMOS ============ -->
-    <section class="section" id="demos">
-      <div class="wrap">
-        <p class="eyebrow" data-reveal>03 · 演示</p>
-        <h2 data-reveal>同一段动作，三种身体</h2>
-        <p class="lead" data-reveal>
-          每组合三段视频：<strong>Reference</strong>（参考演示）→ <strong>Motion Plan</strong>（场景运动规划，稠密光流）→ <strong>Result</strong>（目标场景生成）。
-          悬停预览、点击暂停；切换标签可查看不同迁移模式。
-        </p>
-
-        <div class="tabs" role="tablist" aria-label="迁移类型" data-reveal>
-          <button class="tab is-active" role="tab" aria-selected="true" data-tab="h2h">Human → Human<span class="tab-count">7</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="h2r">Human → Robot<span class="tab-count">5</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="r2r">Robot → Robot<span class="tab-count">6</span></button>
-        </div>
-
-        <div class="demo-grid" id="demoGrid" aria-live="polite"></div>
+    <section id="results" class="section dark-results">
+      <div class="container">
+        <h2>Video Results 视频演示</h2>
+        <p class="section-intro">在画面中拖动分割线，对比参考演示（Reference）与 X-Act 生成结果（Result）；点击卡片上的 “Flow ⇄ Result” 可把右侧切换为运动规划光流（Motion Plan）。左右箭头或圆点可切换示例。</p>
+        <div id="gallery-list"></div>
       </div>
     </section>
 
-    <!-- ============ DATA ============ -->
-    <section class="section section-tint" id="data">
-      <div class="wrap">
-        <p class="eyebrow" data-reveal>04 · 数据</p>
-        <h2 data-reveal>X-Act-30K：三万余段“同一动作、不同世界”</h2>
-        <p class="lead" data-reveal>
-          动作级配对产生训练信号：参考视频直接编码为 Trace，目标视频首帧作为锚点帧，
-          目标视频监督 Target，RAFT 光流监督 Flow——不需要跨视频的逐点对应，也不需要手工标注。
-        </p>
+    <section id="quantitative" class="section alt">
+      <div class="container">
+        <h2>Quantitative Results 定量结果</h2>
+        <p class="section-intro">以下数值摘自论文表格；↑ 表示越高越好，红色高亮为 X-Act（Ours）。论文正在双盲审稿中，结果未经同行评审。</p>
 
-        <div class="card-grid card-grid-3">
-          <article class="data-card" data-reveal>
-            <p class="eyebrow">Human → Human</p>
-            <div class="bar"><span style="width:33%"></span></div>
-            <h3>Something-Something V2</h3>
-            <ul>
-              <li><strong>10,000</strong> 对 / <strong>20</strong> 类</li>
-              <li>人手操作短视频，按动作模板配对</li>
-              <li>VLM 过滤运动模糊与退化样本</li>
-            </ul>
-          </article>
-          <article class="data-card" data-reveal>
-            <p class="eyebrow">Robot → Robot · Simulation</p>
-            <div class="bar"><span style="width:33%"></span></div>
-            <h3>RoboTwin</h3>
-            <ul>
-              <li><strong>10,000</strong> 对 / <strong>37</strong> 任务</li>
-              <li>随机化物体身份与摆放位置</li>
-              <li>指令动作保持一致</li>
-            </ul>
-          </article>
-          <article class="data-card" data-reveal>
-            <p class="eyebrow">Robot → Robot · Real</p>
-            <div class="bar"><span style="width:33%"></span></div>
-            <h3>BridgeV2</h3>
-            <ul>
-              <li><strong>10,000</strong> 对 / <strong>50</strong> 类</li>
-              <li>真实遥操作演示与自由文本指令</li>
-              <li>按动作语义与运动方向归类配对</li>
-            </ul>
-          </article>
-        </div>
-        <p class="fine" data-reveal>合计 30,000 对有序片段，覆盖 107 个操作类别；配对原则：共享动作指定“该保留什么”，视觉差异指定“可以改什么”。</p>
-      </div>
-    </section>
-
-    <!-- ============ RESULTS ============ -->
-    <section class="section" id="results">
-      <div class="wrap">
-        <p class="eyebrow" data-reveal>05 · 实验</p>
-        <h2 data-reveal>在纸面指标与真实机械臂上更进一步</h2>
-
-        <div class="result-grid">
-          <div class="result-block" data-reveal>
-            <h3>自动指标与人工评测</h3>
-            <p class="note">测试集 200 例（80 H2H / 80 R2R / 40 H2R）；↑ 越高越好；用户研究为 20 名志愿者 1–5 分。</p>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Method</th>
-                    <th>Sub. Cons. ↑</th>
-                    <th>BG. Cons. ↑</th>
-                    <th>Txt. Align. ↑</th>
-                    <th>App. Cons. ↑</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="ours">
-                    <td><span class="dot" aria-hidden="true"></span>X-Act（Ours）</td>
-                    <td><strong>0.9788</strong></td>
-                    <td><strong>0.9763</strong></td>
-                    <td><strong>0.2227</strong></td>
-                    <td><strong>0.7798</strong></td>
-                  </tr>
-                  <tr>
-                    <td>MIMIC</td>
-                    <td>0.9581</td><td>0.9498</td><td>0.2142</td><td>0.7752</td>
-                  </tr>
-                  <tr>
-                    <td>FlexiAct</td>
-                    <td>0.8973</td><td>0.9190</td><td>0.2060</td><td>0.7541</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="fine">人工评测五维：Motion Quality 3.16 · Interaction Rationality 3.21 · Semantic Similarity 3.61 · Appearance Consistency 3.28 · Temporal Coherence 3.33 —— 均为第一。</p>
+        <div class="table-card">
+          <h3>对比实验 Comparison（200 例测试：80 H2H / 80 R2R / 40 H2R）</h3>
+          <div class="table-scroll">
+            <table class="metrics-table comparison-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Sub. Cons. ↑</th>
+                  <th>BG. Cons. ↑</th>
+                  <th>Txt. Align. ↑</th>
+                  <th>App. Cons. ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>FlexiAct</td><td>0.8973</td><td>0.9190</td><td>0.2060</td><td>0.7541</td></tr>
+                <tr><td>MotionClone</td><td>0.7318</td><td>0.8265</td><td>0.2204</td><td>0.6657</td></tr>
+                <tr><td>DynamiCrafter</td><td>0.9544</td><td>0.9382</td><td>0.1967</td><td>0.7768</td></tr>
+                <tr><td>CogVideoX</td><td>0.9055</td><td>0.9261</td><td>0.2043</td><td>0.7543</td></tr>
+                <tr><td>MotionDirector</td><td>0.9626</td><td>0.9697</td><td>0.2001</td><td>0.6250</td></tr>
+                <tr><td>Mask2IV</td><td>0.9446</td><td>0.9415</td><td>0.2176</td><td>0.7719</td></tr>
+                <tr><td>MIMIC</td><td>0.9581</td><td>0.9498</td><td>0.2142</td><td>0.7752</td></tr>
+                <tr class="ours"><td>Ours</td><td>0.9788</td><td>0.9763</td><td>0.2227</td><td>0.7798</td></tr>
+              </tbody>
+            </table>
           </div>
+          <p class="table-note">用户研究（20 人，1–5 分）五维均第一：Motion Quality 3.16 · Interaction Rationality 3.21 · Semantic Similarity 3.61 · Appearance Consistency 3.28 · Temporal Coherence 3.33。</p>
+        </div>
 
-          <div class="result-block" data-reveal>
-            <h3>真实机械臂：新任务迁移成功率</h3>
-            <p class="note">AgileX 机械臂 6 个未见任务 × 20 次试验；六任务平均成功率对照：</p>
-            <ul class="bars">
-              <li class="ours"><span class="bar-label">X-Act（Ours）</span><i><b style="width:100%"></b></i><span class="bar-val">68.3%</span></li>
-              <li><span class="bar-label">ImageWAM</span><i><b style="width:78%"></b></i><span class="bar-val">53.3%</span></li>
-              <li><span class="bar-label">Fast-WAM</span><i><b style="width:63%"></b></i><span class="bar-val">43.3%</span></li>
-              <li><span class="bar-label">π₀.₅</span><i><b style="width:49%"></b></i><span class="bar-val">33.3%</span></li>
-              <li><span class="bar-label">Qwen-VLA</span><i><b style="width:41%"></b></i><span class="bar-val">28.3%</span></li>
-            </ul>
-            <p class="fine">单任务成功率：Close Drawer 75% · Stack Cups 60% · Pick and Place 85% · Place Bowl Plate 70% · Slide Block 65% · Drag Cloth 55%。数据来自论文 Table 2 / Table 3，未经同行评审。</p>
+        <div class="table-card">
+          <h3>消融实验 Ablation（自动指标）</h3>
+          <div class="table-scroll">
+            <table class="metrics-table ablation-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Sub. Cons. ↑</th>
+                  <th>BG. Cons. ↑</th>
+                  <th>Txt. Align. ↑</th>
+                  <th>App. Cons. ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>W/o TF Motion Planner</td><td>0.9690</td><td>0.9686</td><td>0.2214</td><td>0.7781</td></tr>
+                <tr><td>W/o SG-RoPE</td><td>0.9688</td><td>0.9680</td><td>0.2208</td><td>0.7786</td></tr>
+                <tr><td>W/o TACA</td><td>0.9701</td><td>0.9692</td><td>0.2219</td><td>0.7789</td></tr>
+                <tr class="ours"><td>X-Act（Ours）</td><td>0.9788</td><td>0.9763</td><td>0.2227</td><td>0.7798</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
+
+        <div class="table-card">
+          <h3>真实机械臂 Real-Robot（AgileX · 6 个未见任务 × 20 次试验，平均成功率）</h3>
+          <div class="table-scroll">
+            <table class="metrics-table ablation-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Avg. Success ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>π₀.₅</td><td>33.3%</td></tr>
+                <tr><td>Qwen-VLA</td><td>28.3%</td></tr>
+                <tr><td>Fast-WAM</td><td>43.3%</td></tr>
+                <tr><td>ImageWAM</td><td>53.3%</td></tr>
+                <tr class="ours"><td>X-Act（Ours）</td><td>68.3%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">单任务成功率：Close Drawer 75% · Stack Cups 60% · Pick and Place 85% · Place Bowl Plate 70% · Slide Block 65% · Drag Cloth 55%。</p>
+        </div>
       </div>
     </section>
 
-    <!-- ============ CITE ============ -->
-    <section class="section section-tint" id="cite">
-      <div class="wrap cite-wrap">
-        <div class="cite-copy" data-reveal>
-          <p class="eyebrow">06 · 引用</p>
-          <h2>引用本文</h2>
-          <p class="lead">论文正在 ICLR 2027 双盲审稿中，作者信息暂以匿名呈现；正式发表后请以最终版本信息引用。</p>
-        </div>
-        <div class="bib" data-reveal>
-          <button class="btn btn-ink btn-sm" id="copyBib" type="button">复制 BibTeX</button>
-          <pre><code>@misc{xact2027,
+    <section id="citation" class="section">
+      <div class="container narrow">
+        <h2>Citation 引用</h2>
+        <p class="section-intro">论文正在 ICLR 2027 双盲审稿中，作者信息暂以匿名呈现；正式发表后请以最终版本信息引用。</p>
+        <div class="bib-wrap">
+          <button class="button copy-btn" id="copyBib" type="button">复制 BibTeX</button>
+          <pre class="bibtex"><code>@misc{xact2027,
   title  = {Generalizable Action Transfer via
             Trace-Flow Motion Planner for World Simulation},
   author = {Anonymous},
@@ -341,16 +248,14 @@
         </div>
       </div>
     </section>
-
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <p>© 2027 X-Act Project · ICLR 2027 双盲审稿中（匿名）。页面内容整理自论文手稿，未经同行评审；生成视频可能存在失败案例，请勿用于安全关键场景。</p>
-      <p><a href="#top">回到顶部 ↑</a></p>
-    </div>
+  <footer class="footer">
+    <p>X-Act project page · ICLR 2027 双盲审稿中（匿名）· 内容基于论文手稿整理，未经同行评审</p>
   </footer>
 
-  <script src="assets/js/main.js"></script>
+  <script src="videos_manifest.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>
