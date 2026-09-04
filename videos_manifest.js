@@ -18,7 +18,7 @@ window.XACT_VIDEO_GALLERIES = (function () {
           left: "assets/media/demo/" + cat + "/" + id + "-input.mp4",
           right: "assets/media/demo/" + cat + "/" + id + "-output.mp4",
           flow: "assets/media/demo/" + cat + "/" + id + "-flow.mp4",
-          rightLabel: "Result"
+          rightLabel: "output"
         };
       })
     };

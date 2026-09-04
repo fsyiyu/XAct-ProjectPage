@@ -92,8 +92,8 @@ function makePairWrapper(scene) {
       ${videoLayer("layer-right-result", scene.right)}
       ${scene.flow ? videoLayer("layer-right-flow", scene.flow) : ""}
       <div class="slider-line"></div>
-      <div class="slider-label tl">Reference</div>
-      <div class="slider-label tr" data-right-label>${scene.rightLabel || "Result"}</div>
+      <div class="slider-label tl">input</div>
+      <div class="slider-label tr" data-right-label>${scene.rightLabel || "output"}</div>
     </div>
   `;
 }
@@ -109,7 +109,7 @@ function makeCard(scene, index, galleryId, total) {
     <div class="card-meta">
       <div class="card-title">${scene.title} <span>(${index + 1} / ${total})</span></div>
       <div class="gallery-controls" style="gap:10px">
-        ${isPair && scene.flow ? `<button class="mode-switch" type="button" aria-label="Toggle right side between optical flow and result">Flow ⇄ Result</button>` : ""}
+        ${isPair && scene.flow ? `<button class="mode-switch" type="button" aria-label="Toggle right side between optical flow and output">Flow ⇄ Output</button>` : ""}
         <div class="scene-dots">
           ${Array.from({ length: total }, (_, dotIndex) => `
             <button class="scene-dot" data-gallery="${galleryId}" data-index="${dotIndex}" aria-label="Show scene ${dotIndex + 1}"></button>
@@ -128,8 +128,8 @@ function makeCard(scene, index, galleryId, total) {
       const rightLabel = card.querySelector("[data-right-label]");
       const showFlow = wrapper.classList.toggle("show-flow");
       switchBtn.classList.toggle("on", showFlow);
-      switchBtn.textContent = showFlow ? "Result ⇄ Flow" : "Flow ⇄ Result";
-      if (rightLabel) rightLabel.textContent = showFlow ? "Motion Plan" : (scene.rightLabel || "Result");
+      switchBtn.textContent = showFlow ? "Output ⇄ Flow" : "Flow ⇄ Output";
+      if (rightLabel) rightLabel.textContent = showFlow ? "Motion Plan" : (scene.rightLabel || "output");
     });
   }
   card.addEventListener("click", () => {
